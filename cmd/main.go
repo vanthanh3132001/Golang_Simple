@@ -10,10 +10,17 @@ import (
 	"github.com/labstack/echo/v4"
 	"gopkg.in/yaml.v2"
 	"os"
+	"time"
 )
 
-func main() {
+type Log struct {
+	ID        int
+	Message   string
+	CreatedAt time.Time
+}
 
+func main() {
+	// database connect
 	var cfg model.Config
 	loadConfig(&cfg)
 	var sql = new(db.SQL)
@@ -31,6 +38,7 @@ func main() {
 	}
 	api.SetupRouter()
 	e.Logger.Fatal(e.Start(fmt.Sprintf("localhost:%s", cfg.Server.Port)))
+
 }
 
 func loadConfig(cfg *model.Config) {
