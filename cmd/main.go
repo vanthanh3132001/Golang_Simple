@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/example/db"
+	"github.com/example/handler"
 	"github.com/example/model"
+	"github.com/example/repository"
+	"github.com/example/router"
 	"github.com/labstack/echo/v4"
 	"gopkg.in/yaml.v2"
 	"os"
@@ -18,11 +21,18 @@ func main() {
 	defer sql.Close()
 
 	e := echo.New()
-	//userHandler := handler.UserHandler{
-	//	UserRepo: repository.NewUserRepo(sql),
-	//}
+	userHandler := handler.UserHandler{
+		UserRepo: repository.NewUserRepo(sql),
+	}
+
+	api := router.API{
+		Echo:        e,
+		UserHandler: userHandler,
+	}
+	api.SetupRouter()
 	e.Logger.Fatal(e.Start(fmt.Sprintf("localhost:%s", cfg.Server.Port)))
 }
+
 func loadConfig(cfg *model.Config) {
 	f, err := os.Open("../env.dev.yml")
 	if err != nil {
